@@ -1,3 +1,7 @@
+module Task (
+    Task(..)
+) where
+
 -- Define Task data type
 data Task = Task {
     taskId :: Int,

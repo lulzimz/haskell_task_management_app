@@ -4,7 +4,6 @@ module TaskFunctions (
 ) where
 
 import Task
-import TaskManipulation
 import PrintColored
 import UserInputActions
 

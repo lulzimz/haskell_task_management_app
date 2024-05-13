@@ -2,7 +2,6 @@ module TaskManipulation (
     validStatusOptions,
     createTask,
     updateTaskStatus,
-    taskExists,
     deleteTask,
     showTasks,
     findTasksByStatus,
@@ -17,6 +16,8 @@ import PrintColored
 validStatusOptions :: [String]
 validStatusOptions = ["To do", "In progress", "Done"]
 
+
+--------------------------------- Task Manipulations--------------------------
 --function to create a new task
 createTask :: String -> String -> String -> Int -> Task
 createTask title description date priority = Task {
@@ -30,9 +31,6 @@ createTask title description date priority = Task {
 -- Update function for a task
 updateTaskStatus :: Task -> String -> Task
 updateTaskStatus task newStatus = task { status = newStatus }
-
-taskExists :: [Task] -> String -> Bool
-taskExists tasks taskTitle = any (\task -> title task == taskTitle) tasks
 
 -- Delete function for a task
 deleteTask :: [Task] -> String -> [Task]

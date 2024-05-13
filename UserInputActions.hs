@@ -12,20 +12,26 @@ module UserInputActions (
 import Task
 import TaskManipulation
 import PrintColored
+import Validations
 
 createTaskAction :: [Task] -> IO [Task]
 createTaskAction tasks = do
     putStrLn "Enter title:"
     title <- getLine
-    putStrLn "Enter description:"
-    description <- getLine
-    putStrLn "Enter date (example 2024-05-08):"
-    date <- getLine
-    putStrLn "Enter priority (integer):"
-    priority <- getLine
-    let newTask = createTask title description date (read priority :: Int)
-    printColored colorGreen "Task created successfully!"
-    return (newTask:tasks)
+    if (isTitleUnique title tasks)
+        then do
+            putStrLn "Enter description:"
+            description <- getLine
+            putStrLn "Enter date (example 2024-05-08):"
+            date <- getDate
+            putStrLn "Enter priority (integer):"
+            priority <- getPriority
+            let newTask = createTask title description date priority
+            printColored colorGreen "Task created successfully!"
+            return (newTask:tasks)
+        else do
+            putStrLn "Title already exists. Please enter a unique title."
+            createTaskAction tasks
 
 displayTasksAction :: [Task] -> IO ()
 displayTasksAction tasks = do
@@ -33,8 +39,7 @@ displayTasksAction tasks = do
     showTasks tasks
     putStrLn ""
 
-    -- Define a function to handle updating task status
-
+-- Define a function to handle updating task status
 updateStatusAction :: [Task] -> IO [Task]
 updateStatusAction tasks = do
     putStrLn "Enter task title to update:"

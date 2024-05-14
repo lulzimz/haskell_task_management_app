@@ -1,12 +1,14 @@
-module Task (
-    Task(..)
-) where
+module Task
+  ( Task (..),
+  )
+where
 
 -- Define Task data type
-data Task = Task {
-    title :: String,
+data Task = Task
+  { title :: String,
     description :: String,
     date :: String,
     priority :: Int,
     status :: String
-} deriving (Show)
+  }
+  deriving (Show)

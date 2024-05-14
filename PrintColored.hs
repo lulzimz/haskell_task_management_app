@@ -1,9 +1,10 @@
-module PrintColored (
-    printColored,
+module PrintColored
+  ( printColored,
     colorRed,
     colorGreen,
-    colorBlue
-) where
+    colorBlue,
+  )
+where
 
 -- ANSI color codes
 colorRed :: String
@@ -21,4 +22,3 @@ colorReset = "\x1b[0m"
 -- Function to print a string with color
 printColored :: String -> String -> IO ()
 printColored colorCode str = putStrLn $ colorCode ++ str ++ colorReset
-

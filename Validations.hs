@@ -1,7 +1,6 @@
 module Validations
   ( getPriority,
     getDate,
-    taskExists,
     isTitleUnique,
   )
 where
@@ -14,9 +13,6 @@ import Task
 import Text.Read (readMaybe)
 
 ------------------------- Title Validation -------------------------
-taskExists :: [Task] -> String -> Bool
-taskExists tasks taskTitle = any (\task -> title task == taskTitle) tasks
-
 isTitleUnique :: String -> [Task] -> Bool
 isTitleUnique taskTitle tasks = null $ find (\task -> title task == taskTitle) tasks
 

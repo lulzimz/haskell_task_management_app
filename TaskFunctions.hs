@@ -24,26 +24,26 @@ showMenu = do
 performAction :: [Task] -> String -> IO ()
 performAction tasks "1" = do
   newTask <- createTaskAction tasks
-  showMenu >>= \_ -> getLine >>= \userInput -> performAction newTask userInput -- operator >>= (bind) is used to chain actions together
+  showMenu >> (getLine >>= \userInput -> performAction newTask userInput) -- operator >>= (bind) is used to chain actions together
 performAction tasks "2" = do
   displayTasksAction tasks
-  showMenu >>= \_ -> getLine >>= \userInput -> performAction tasks userInput
+  showMenu >> (getLine >>= \userInput -> performAction tasks userInput)
 performAction tasks "3" = do
   updatedTasks <- updateStatusAction tasks
   putStrLn ""
-  showMenu >>= \_ -> getLine >>= \userInput -> performAction updatedTasks userInput
+  showMenu >> (getLine >>= \userInput -> performAction updatedTasks userInput)
 performAction tasks "4" = do
   updatedTasks <- deleteTaskAction tasks
-  showMenu >>= \_ -> getLine >>= \userInput -> performAction updatedTasks userInput
+  showMenu >> (getLine >>= \userInput -> performAction updatedTasks userInput)
 performAction tasks "5" = do
   displayTasksByStatusAction tasks
-  showMenu >>= \_ -> getLine >>= \userInput -> performAction tasks userInput
+  showMenu >> (getLine >>= \userInput -> performAction tasks userInput)
 performAction tasks "6" = do
   updatedTasks <- updateTaskPriorityAction tasks
-  showMenu >>= \_ -> getLine >>= \userInput -> performAction updatedTasks userInput
+  showMenu >> (getLine >>= \userInput -> performAction updatedTasks userInput)
 performAction tasks "7" = do
   displayTaskStatisticsAction tasks
-  showMenu >>= \_ -> getLine >>= \userInput -> performAction tasks userInput
+  showMenu >> (getLine >>= \userInput -> performAction tasks userInput)
 performAction _ "0" = putStrLn "THANK YOU FOR USING OUR TASK MANAGEMENT APP!"
 performAction tasks _ = do
   printColored colorRed "Selected option is invalid. Please choose one option from the list."

@@ -7,6 +7,7 @@ module TaskManipulation
     findTasksByStatus,
     updateTaskPriority,
     showTaskStatistics,
+    taskExists,
   )
 where
 
@@ -44,6 +45,10 @@ showTasks tasks = mapM_ print tasks
 -- Find task by status
 findTasksByStatus :: [Task] -> String -> [Task]
 findTasksByStatus tasks taskStatus = filter (\task -> taskStatus == status task) tasks
+
+-- check if task exists
+taskExists :: [Task] -> String -> Bool
+taskExists tasks taskTitle = any (\task -> title task == taskTitle) tasks
 
 -- change task priority
 updateTaskPriority :: Task -> Int -> Task

@@ -30,9 +30,12 @@ createTask title description date priority =
       status = "To do" -- Initial status is "To do"
     }
 
--- Update function for a task
-updateTaskStatus :: Task -> String -> Task
-updateTaskStatus task newStatus = task {status = newStatus}
+-- Update task status
+updateTaskStatus :: [Task] -> String -> String -> IO [Task]
+updateTaskStatus tasks newStatus taskTitle = do
+  let updatedTasks = map (\task -> if title task == taskTitle then task {status = newStatus} else task) tasks
+  printColored colorGreen "Status changed!"
+  return updatedTasks
 
 -- Delete function for a task
 deleteTask :: [Task] -> String -> [Task]
@@ -40,7 +43,7 @@ deleteTask tasks taskTitle = filter (\task -> title task /= taskTitle) tasks
 
 -- Display function for a task
 showTasks :: [Task] -> IO ()
-showTasks tasks = mapM_ print tasks
+showTasks = mapM_ print
 
 -- Find task by status
 findTasksByStatus :: [Task] -> String -> [Task]

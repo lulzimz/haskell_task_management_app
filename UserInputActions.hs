@@ -15,6 +15,7 @@ import Task
 import TaskManipulation
 import Validations
 
+-- Function to handle user inputs and create a task
 createTaskAction :: [Task] -> IO [Task]
 createTaskAction tasks = do
   putStrLn "Enter title:"
@@ -40,77 +41,39 @@ displayTasksAction tasks = do
   showTasks tasks
   putStrLn ""
 
--- Define a function to handle updating task status
+-- Function to handle updating task status
 updateStatusAction :: [Task] -> IO [Task]
 updateStatusAction tasks = do
-  putStrLn "Enter task title to update:"
-  taskTitle <- getLine
-  if taskExists tasks taskTitle
-    then do
-      putStrLn "Select new task status:"
-      mapM_ putStrLn $ zipWith (\i status -> show i ++ ". " ++ status) [1 ..] validStatusOptions
-      statusOption <- getLine
-      let statusIndex = read statusOption :: Int
-      if statusIndex >= 1 && statusIndex <= length validStatusOptions
-        then do
-          let newStatus = validStatusOptions !! (statusIndex - 1)
-          let updatedTasks = map (\task -> if title task == taskTitle then updateTaskStatus task newStatus else task) tasks
-          printColored colorGreen "Status changed!"
-          return updatedTasks
-        else do
-          printColored colorRed "Invalid status option!"
-          return tasks
-    else do
-      printColored colorRed "Task with this title does not exists!"
-      updateStatusAction tasks
+  taskTitle <- getTitle tasks
+  selectedStatus <- getStatusOptions tasks
+  updateTaskStatus tasks selectedStatus taskTitle
 
 deleteTaskAction :: [Task] -> IO [Task]
 deleteTaskAction tasks = do
-  putStrLn "Enter task title you want to delete:"
-  taskTitle <- getLine
-  if taskExists tasks taskTitle
-    then do
-      let remainingTasks = deleteTask tasks taskTitle
-      printColored colorGreen "Task deleted successfully!"
-      return remainingTasks
-    else do
-      printColored colorRed "Task with this title does not exists!"
-      deleteTaskAction tasks
+  taskTitle <- getTitle tasks
+  let remainingTasks = deleteTask tasks taskTitle
+  printColored colorGreen "Task deleted successfully!"
+  return remainingTasks
 
 displayTasksByStatusAction :: [Task] -> IO ()
 displayTasksByStatusAction tasks = do
-  putStrLn "Enter status to display tasks:"
-  mapM_ putStrLn $ zipWith (\i status -> show i ++ ". " ++ status) [1 ..] validStatusOptions
-  selectedStatus <- getLine
-  let statusIndex = read selectedStatus :: Int
-  if statusIndex >= 1 && statusIndex <= length validStatusOptions
+  selectedStatus <- getStatusOptions tasks
+  let tasksByStatus = findTasksByStatus tasks selectedStatus
+  if not (null tasksByStatus)
     then do
-      let statusTitle = validStatusOptions !! (statusIndex - 1)
-      let tasksByStatus = findTasksByStatus tasks statusTitle
-      if not (null tasksByStatus)
-        then do
-          printColored colorGreen $ "Tasks with status '" ++ statusTitle ++ "':"
-          showTasks tasksByStatus
-        else do
-          printColored colorBlue "No task found with this status!"
+      printColored colorGreen $ "Tasks with status '" ++ selectedStatus ++ "':"
+      showTasks tasksByStatus
     else do
-      printColored colorRed "Please enter only one of statuses above!"
-      displayTasksByStatusAction tasks
+      printColored colorBlue "No task found with this status!"
 
 updateTaskPriorityAction :: [Task] -> IO [Task]
 updateTaskPriorityAction tasks = do
-  putStrLn "Enter task title to change its priority:"
-  taskTitle <- getLine
-  if taskExists tasks taskTitle
-    then do
-      putStrLn "Type new priority:"
-      priorityInput <- getPriority
-      let updatedTasks = map (\task -> if title task == taskTitle then updateTaskPriority task priorityInput else task) tasks
-      printColored colorGreen "Priority updated!"
-      return updatedTasks
-    else do
-      printColored colorRed "Task with this title does not exists!"
-      updateTaskPriorityAction tasks
+  taskTitle <- getTitle tasks
+  putStrLn "Type new priority:"
+  priorityInput <- getPriority
+  let updatedTasks = map (\task -> if title task == taskTitle then updateTaskPriority task priorityInput else task) tasks
+  printColored colorGreen "Priority updated!"
+  return updatedTasks
 
 displayTaskStatisticsAction :: [Task] -> IO ()
 displayTaskStatisticsAction tasks = do

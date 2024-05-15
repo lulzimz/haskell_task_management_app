@@ -2,6 +2,8 @@ module Validations
   ( getPriority,
     getDate,
     isTitleUnique,
+    getStatusOptions,
+    getTitle,
   )
 where
 
@@ -10,11 +12,24 @@ import Data.Time.Clock (UTCTime)
 import Data.Time.Format (defaultTimeLocale, parseTimeM)
 import PrintColored
 import Task
+import TaskManipulation
 import Text.Read (readMaybe)
 
 ------------------------- Title Validation -------------------------
 isTitleUnique :: String -> [Task] -> Bool
 isTitleUnique taskTitle tasks = null $ find (\task -> title task == taskTitle) tasks
+
+-- Validate priority input for integer
+getTitle :: [Task] -> IO String
+getTitle tasks = do
+  putStrLn "Enter task title:"
+  taskTitle <- getLine
+  if taskExists tasks taskTitle
+    then do
+      return taskTitle
+    else do
+      printColored colorRed "Task with this title does not exists!"
+      getTitle tasks
 
 ------------------------- Priority Validation -------------------------
 -- Validate priority input for integer
@@ -43,3 +58,18 @@ isValidDateFormat dateStr =
     && case parseTimeM True defaultTimeLocale "%Y-%m-%d" dateStr :: Maybe UTCTime of
       Just _ -> True
       Nothing -> False
+
+------------------------- Status Validation -------------------------
+getStatusOptions :: [Task] -> IO String
+getStatusOptions tasks = do
+  putStrLn "Select task status:"
+  mapM_ putStrLn $ zipWith (\i status -> show i ++ ". " ++ status) [1 ..] validStatusOptions
+  statusOption <- getLine
+  let statusIndex = read statusOption :: Int
+  if statusIndex >= 1 && statusIndex <= length validStatusOptions
+    then do
+      let selectedStatus = validStatusOptions !! (statusIndex - 1)
+      return selectedStatus
+    else do
+      printColored colorRed "Invalid status option!"
+      getStatusOptions tasks
